@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRS for TRD1. Placeholders: @LOCAL_IP@ @LOCAL_CIDR@ -->
+<um-srs version="1.0">
+  <daemon>
+    <log type="console"/>
+    <pid-file>srs.pid</pid-file>
+  </daemon>
+  <srs>
+    <interface>@LOCAL_IP@</interface>
+    <port>12601</port>
+    <application-id>srs1</application-id>
+  </srs>
+  <daemon-monitor topic="/29west/statistics">
+    <ping-interval>5000</ping-interval>
+    <publishing-interval>
+      <default>5000</default>
+    </publishing-interval>
+    <lbm-attributes>
+      <!-- Must mirror the mon_ctx template in um.xml. -->
+      <option scope="context" name="resolver_unicast_daemon" value="@LOCAL_IP@:12801"/>
+      <option scope="context" name="default_interface" value="@LOCAL_CIDR@"/>
+      <option scope="context" name="request_tcp_interface" value="@LOCAL_CIDR@"/>
+      <option scope="context" name="mim_incoming_address" value="0.0.0.0"/>
+      <option scope="context" name="resolver_unicast_port_low" value="12802"/>
+      <option scope="context" name="resolver_unicast_port_high" value="12809"/>
+      <option scope="context" name="request_tcp_reuseaddr" value="1"/>
+      <option scope="source" name="transport" value="tcp"/>
+    </lbm-attributes>
+    <monitor-format>pb</monitor-format>
+  </daemon-monitor>
+</um-srs>

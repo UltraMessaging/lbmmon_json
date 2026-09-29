@@ -1,3 +1,21 @@
+# Scratch files
+x
+x.*
+*.x
+*.tmp
+tmp.*
+*.tmp[0-9]
+~*
+.DS_Store
+lbm.sh
+
+# Regenerated every build from $UM_PROTO_DIR
+generated/
+
+# Default cache for .proto files auto-fetched by bld.sh when
+# $UM_PROTO_DIR is unset. Contents pulled from the UM online docs.
+proto/
+
 # Prerequisites
 *.d
 
@@ -35,6 +53,7 @@
 *.lib
 
 # Executables
+lbmmon_json
 *.exe
 *.out
 *.app

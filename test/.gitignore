@@ -1,0 +1,15 @@
+# Generated from *.template by tst.sh
+um.xml
+lbmrd.xml
+srs.xml
+store.xml
+
+# Runtime artefacts
+*.jsonl
+*.err
+*.pid
+cache/
+state/
+
+# Built by tst.sh
+umercv

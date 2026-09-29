@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  UM library configuration for the lbmmon_json test.
+  Modeled after ~/GitHub/mcs_demo/um.xml.
+
+  mcs_demo splits production traffic (@LOCAL_CIDR@, .4 in the
+  original) and monitoring traffic (.3 in the original) onto
+  separate physical interfaces. This test runs on a single host
+  and single interface, so both TRDs use @LOCAL_CIDR@.
+
+  Placeholders substituted by tst.sh: @LOCAL_IP@ @LOCAL_CIDR@
+-->
+<um-configuration version="1.0">
+  <templates>
+    <template name="mytemplate">
+      <options type="context">
+        <option name="default_interface" default-value="@LOCAL_CIDR@"/>
+        <option name="mim_incoming_address" default-value="0.0.0.0"/>
+        <option name="transport_lbtrm_data_rate_limit" default-value="100000000000"/>
+        <option name="transport_lbtrm_receiver_socket_buffer" default-value="128000000"/>
+        <option name="dynamic_fragmentation_reduction" default-value="1"/>
+        <option name="transport_lbtrm_datagram_max_size" default-value="1472"/>
+        <option name="fd_management_type" default-value="epoll"/>
+        <option name="multiple_receive_maximum_datagrams" default-value="100"/>
+        <option name="transport_lbtrm_recycle_receive_buffers" default-value="1"/>
+        <option name="request_tcp_port_low" default-value="14391"/>
+        <option name="request_tcp_port_high" default-value="14499"/>
+        <option name="request_tcp_reuseaddr" default-value="1"/>
+      </options>
+      <options type="source">
+        <option name="transport" default-value="lbtrm"/>
+        <option name="implicit_batching_minimum_length" default-value="1"/>
+        <option name="retransmit_retention_size_limit" default-value="71000000"/>
+        <option name="ume_message_stability_timeout" default-value="0"/>
+        <option name="ume_flight_size" default-value="100000"/>
+        <option name="ume_flight_size_bytes" default-value="140000000"/>
+      </options>
+      <options type="receiver">
+        <option name="delivery_control_maximum_burst_loss" default-value="100000000"/>
+      </options>
+    </template>
+    <template name="res_trd1">
+      <!-- DRO endpoint TRD1. Topic resolution via SRS. -->
+      <options type="context">
+        <option name="resolver_service" default-value="@LOCAL_IP@:12601"/>
+        <option name="resolver_disable_udp_topic_resolution" default-value="1"/>
+      </options>
+    </template>
+    <template name="res_trd2">
+      <!-- DRO endpoint TRD2. Topic resolution via multicast. -->
+      <options type="context">
+        <option name="default_interface" default-value="@LOCAL_CIDR@"/>
+        <option name="resolver_multicast_address" default-value="239.101.3.1"/>
+      </options>
+    </template>
+    <template name="automonitor">
+      <options type="context">
+        <option name="monitor_format" default-value="pb"/>
+        <!-- Artificially low for testing. Production: ~600. -->
+        <option name="monitor_interval" default-value="5"/>
+        <option name="monitor_transport" default-value="lbm"/>
+      </options>
+    </template>
+    <template name="automonitor_evq">
+      <!-- Adds event-queue monitoring on top of context monitoring,
+           so umercv (run with -q) reports event-queue stats too.
+           umercv deliberately monitors in CSV so the test exercises
+           lbmmon's passthrough=convert path: lbmmon_json (via the lbmmon
+           library) transparently converts these CSV packets to PB
+           and delivers them to the callback as ordinary packet_type
+           records. -->
+      <options type="event-queue">
+        <option name="monitor_format" default-value="csv"/>
+        <option name="monitor_interval" default-value="5"/>
+        <option name="monitor_transport" default-value="lbm"/>
+        <option name="queue_count_enabled" default-value="1"/>
+      </options>
+      <options type="context">
+        <option name="monitor_format" default-value="csv"/>
+        <option name="monitor_interval" default-value="5"/>
+        <option name="monitor_transport" default-value="lbm"/>
+      </options>
+    </template>
+    <template name="mon_ctx">
+      <!-- Automatic-monitoring context (a.k.a. Mon TRD).
+           These settings are mirrored in srs.xml. -->
+      <options type="context">
+        <option name="resolver_unicast_daemon" default-value="@LOCAL_IP@:12801"/>
+        <option name="default_interface" default-value="@LOCAL_CIDR@"/>
+        <option name="mim_incoming_address" default-value="0.0.0.0"/>
+        <option name="resolver_unicast_port_low" default-value="12802"/>
+        <option name="resolver_unicast_port_high" default-value="12819"/>
+        <option name="request_tcp_reuseaddr" default-value="1"/>
+      </options>
+      <options type="source">
+        <option name="transport" default-value="tcp"/>
+      </options>
+    </template>
+  </templates>
+
+  <applications>
+    <application name="umesrc" template="mytemplate,automonitor,res_trd1">
+      <contexts>
+        <context>
+          <sources>
+            <topic topicname="topic1">
+              <options type="source">
+                <option name="transport_lbtrm_multicast_address" default-value="239.101.3.2"/>
+                <option name="ume_store_name" default-value="store_topic1"/>
+              </options>
+            </topic>
+          </sources>
+        </context>
+        <context name="29west_statistics_context" template="mon_ctx">
+          <sources/>
+        </context>
+      </contexts>
+    </application>
+
+    <application name="umercv" template="mytemplate,automonitor_evq,res_trd2">
+      <contexts>
+        <context name="29west_statistics_context" template="mon_ctx">
+          <sources/>
+        </context>
+      </contexts>
+    </application>
+
+    <application name="tnwgd">
+      <contexts>
+        <context name="TRD1" template="mytemplate,res_trd1">
+          <sources>
+            <topic topicname="topic1">
+              <options type="source">
+                <option name="transport_lbtrm_multicast_address" default-value="239.101.3.4"/>
+              </options>
+            </topic>
+          </sources>
+        </context>
+        <context name="TRD2" template="mytemplate,res_trd2">
+          <sources>
+            <topic topicname="topic1">
+              <options type="source">
+                <option name="transport_lbtrm_multicast_address" default-value="239.101.3.3"/>
+              </options>
+            </topic>
+          </sources>
+        </context>
+        <context name="29west_statistics_context" template="mon_ctx">
+          <sources/>
+        </context>
+      </contexts>
+    </application>
+
+    <application name="store1">
+      <contexts>
+        <context name="store_topic1" template="mytemplate,automonitor,res_trd1">
+          <sources/>
+        </context>
+        <context name="29west_statistics_context" template="mon_ctx">
+          <sources/>
+        </context>
+      </contexts>
+    </application>
+
+    <!-- lbmmon_json plays the role MCS+lbmmon play in mcs_demo:
+         it is the monitoring-data receiver. Network I/O is
+         delegated to the lbmmon library, which creates a context
+         named 29west_statistics_context internally; the mon_ctx
+         template gives that context its Mon TRD settings. -->
+    <application name="lbmmon_json">
+      <contexts>
+        <context name="29west_statistics_context" template="mon_ctx">
+          <sources/>
+        </context>
+      </contexts>
+    </application>
+
+  </applications>
+</um-configuration>

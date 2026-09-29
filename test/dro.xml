@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- DRO connecting TRD1 (SRS) and TRD2 (multicast).
+     No IP substitution: interfaces come from um.xml via
+     context_name lookup. -->
+<tnw-gateway version="1.0">
+  <daemon>
+    <name>dro1</name>
+    <log type="console"/>
+    <pidfile>dro.pid</pidfile>
+    <!-- Artificially low for testing. Production: ~600. -->
+    <monitor interval="5">
+      <transport-module module="lbm"/>
+      <format-module module="pb"/>
+    </monitor>
+    <xml-config>um.xml</xml-config>
+  </daemon>
+  <portals>
+    <endpoint>
+      <name>TRD1</name>
+      <domain-id>1</domain-id>
+      <lbm-attributes>
+        <option name="context_name" scope="context" value="TRD1" />
+      </lbm-attributes>
+    </endpoint>
+    <endpoint>
+      <name>TRD2</name>
+      <domain-id>2</domain-id>
+      <lbm-attributes>
+        <option name="context_name" scope="context" value="TRD2" />
+      </lbm-attributes>
+    </endpoint>
+  </portals>
+</tnw-gateway>

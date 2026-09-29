@@ -1,0 +1,30 @@
+#!/bin/sh
+# lbm.sh.example. Copy to "lbm.sh" and replace license info with yours.
+
+export LBM_LICENSE_INFO="Product=LBM,UME,UMQ,UMDRO:Organization=xxxx:Expiration-Date=never:License-Key=xxxx xxxx xxxx xxxx"
+
+L=$HOME/UMP_6.14/
+LBM=$L/Linux-glibc-2.17-x86_64
+LBMJ=$L/java
+
+export LD_LIBRARY_PATH=$LBM/lib
+
+export PATH="$LBM/bin:$L/SRS/bin:$L/MCS/bin:$PATH"
+
+# .proto schemas for UM monitoring messages.
+#
+# Plan A (default): leave UM_PROTO_DIR unset. bld.sh will fetch
+# the current UM monitoring .proto files from
+#   https://ultramessaging.github.io/currdoc/doc/example/
+# into ./proto/ on the first build and reuse the cache after
+# that. UM keeps its monitoring .proto files backwards
+# compatible, so the current release's schemas work with older
+# UM installs too.
+#
+# Plan B (opt-in): point UM_PROTO_DIR at a local directory
+# containing the six .proto files -- from your UM doc package
+# (the schemas ship with the doc bundle, though not with the
+# binary install) or from a version snapshot you're archiving.
+# Useful for reproducible offline builds.
+#
+# export UM_PROTO_DIR="$HOME/um_proto/6.17.1"

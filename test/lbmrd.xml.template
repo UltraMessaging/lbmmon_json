@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- lbmrd for the Mon TRD. Placeholders: @LOCAL_CIDR@ -->
+<lbmrd version="1.0">
+  <daemon>
+    <port>12801</port>
+    <interface>@LOCAL_CIDR@</interface>
+  </daemon>
+  <domains>
+    <domain name="dummy">
+      <network>0.0.0.0/32</network>
+    </domain>
+  </domains>
+  <transformations>
+    <transform source="dummy" destination="dummy">
+      <rule>
+        <match address="0.0.0.0" port="0"/>
+        <replace address="0.0.0.0" port="0"/>
+      </rule>
+    </transform>
+  </transformations>
+</lbmrd>
