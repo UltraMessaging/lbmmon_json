@@ -4,6 +4,20 @@ Receive Ultra Messaging (UM) monitoring packets and print each one
 as a single line of JSON on `stdout`.
 
 <!-- mdtoc-start -->
+&bull; [lbmmon_json](#lbmmon_json)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Copyright and License](#copyright-and-license)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Repository](#repository)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Introduction](#introduction)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Prerequisites](#prerequisites)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Setup](#setup)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Build](#build)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Run](#run)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Output](#output)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Working with the output](#working-with-the-output)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [End-to-end test](#end-to-end-test)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Reporting problems](#reporting-problems)  
+&nbsp;&nbsp;&nbsp;&nbsp;&bull; [Maintenance model](#maintenance-model)  
+<!-- TOC created by '../mdtoc/mdtoc.pl ./README.md' (see https://github.com/fordsfords/mdtoc) -->
 <!-- mdtoc-end -->
 
 ## Copyright and License

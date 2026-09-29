@@ -12,6 +12,14 @@
 
 set -u
 
+for F in `find . -name '*.md' -print`; do
+  if egrep "<!-- mdtoc-start -->" $F >/dev/null; then
+    # Update doc table of contents (see https://github.com/fordsfords/mdtoc).
+    if which mdtoc.pl >/dev/null; then mdtoc.pl -b "" $F;
+    elif [ -x ../mdtoc/mdtoc.pl ]; then ../mdtoc/mdtoc.pl -b "" $F;
+    else echo "FYI: mdtoc.pl not found; Skipping doc build"; echo ""; fi
+  fi
+done
 PROTO_FILES="ums_mon.proto ump_mon.proto dro_mon.proto srs_mon.proto \
 um_mon_attributes.proto um_mon_control.proto"
 PROTO_URL_BASE="https://ultramessaging.github.io/currdoc/doc/example"
