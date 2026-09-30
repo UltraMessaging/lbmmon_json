@@ -235,6 +235,14 @@ The JSON uses `snake_case` field names matching the source
 `.proto` schemas, and zero-valued primitive fields are omitted
 to keep lines compact.
 
+If you want to act on individual fields programmatically rather
+than parse the emitted JSON downstream, see
+[`field_access.md`](field_access.md) for a guide with
+representative examples against the UMS, Store, and DRO
+schemas — both via the C++ protobuf classes `bld.sh` generates
+under `generated/` and via the C `protobuf-c` headers UM ships
+under `$LBM/include/lbm/gen/`.
+
 ## End-to-end test
 
 A self-contained local test lives in `test/`. It stands up a full
